@@ -1,0 +1,9 @@
+{
+  "name": "stapp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "md.bootstrappersiandatetimepicker": "3.6.3"
+  }
+}
