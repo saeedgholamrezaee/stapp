@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>React Todo App - بدون JSX</title>
+    
+    <!-- React CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <style>
+        body {
+            font-family: Tahoma, Arial;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-family: Tahoma;
+            font-size: 14px;
+        }
+        input:focus {
+            outline: none;
+            border-color: #61dafb;
+        }
+        button {
+            padding: 12px 24px;
+            background: #61dafb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: Tahoma;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #4fa8c5;
+        }
+        .btn-delete {
+            background: #e74c3c;
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+        .btn-delete:hover {
+            background: #c0392b;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            background: #f9f9f9;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #61dafb;
+        }
+        .empty {
+            text-align: center;
+            color: #999;
+            padding: 40px;
+            font-style: italic;
+        }
+        .stats {
+            background: #61dafb;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script>
+        // ✅ Destructure React hooks
+        const { useState } = React;
+        const { createRoot } = ReactDOM;
+        const { createElement: h } = React; // کوتاه‌تر!
+
+        // Component: TodoItem
+        function TodoItem({ todo, onDelete }) {
+            return h('li', null,
+                h('span', null, todo.text),
+                h('button', 
+                    { 
+                        className: 'btn-delete',
+                        onClick: () => onDelete(todo.id)
+                    },
+                    '🗑️ حذف'
+                )
+            );
+        }
+
+        // Component: TodoApp
+        function TodoApp() {
+            const [todos, setTodos] = useState([
+                { id: 1, text: 'یادگیری React' },
+                { id: 2, text: 'ساخت پروژه' },
+                { id: 3, text: 'تمرین روزانه' }
+            ]);
+            const [newTodo, setNewTodo] = useState('');
+
+            function addTodo() {
+                if (newTodo.trim()) {
+                    setTodos([
+                        ...todos,
+                        { id: Date.now(), text: newTodo }
+                    ]);
+                    setNewTodo('');
+                }
+            }
+
+            function deleteTodo(id) {
+                setTodos(todos.filter(todo => todo.id !== id));
+            }
+
+            function handleKeyPress(e) {
+                if (e.key === 'Enter') {
+                    addTodo();
+                }
+            }
+
+            // ✅ بدون JSX - فقط React.createElement
+            return h('div', { className: 'container' },
+                // Title
+                h('h1', null, '📝 لیست کارها - React بدون JSX'),
+                
+                // Input Group
+                h('div', { className: 'input-group' },
+                    h('input', {
+                        type: 'text',
+                        value: newTodo,
+                        onChange: (e) => setNewTodo(e.target.value),
+                        onKeyPress: handleKeyPress,
+                        placeholder: 'کار جدید اضافه کنید...'
+                    }),
+                    h('button', { onClick: addTodo }, '➕ افزودن')
+                ),
+                
+                // Todo List
+                todos.length > 0
+                    ? h('ul', null,
+                        ...todos.map(todo =>
+                            h(TodoItem, {
+                                key: todo.id,
+                                todo: todo,
+                                onDelete: deleteTodo
+                            })
+                        )
+                    )
+                    : h('div', { className: 'empty' },
+                        '😊 هیچ کاری وجود ندارد'
+                    ),
+                
+                // Stats
+                h('div', { className: 'stats' },
+                    `📊 تعداد کل کارها: ${todos.length}`
+                )
+            );
+        }
+
+        // ✅ Render
+        const root = createRoot(document.getElementById('root'));
+        root.render(h(TodoApp));
+    </script>
+</body>
+</html>

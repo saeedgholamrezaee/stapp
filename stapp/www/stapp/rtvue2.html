@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue 2 - مثال کامل</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+    <style>
+        body { font-family: Tahoma; padding: 20px; }
+        .card { border: 1px solid #ddd; padding: 15px; margin: 10px 0; }
+        button { padding: 8px 16px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>{{ title }}</h1>
+        
+        <!-- Component استفاده -->
+        <counter :initial="5"></counter>
+        <counter :initial="10"></counter>
+        
+        <!-- List -->
+        <div class="card">
+            <h3>لیست کارها</h3>
+            <input v-model="newTodo" @keyup.enter="addTodo" placeholder="کار جدید...">
+            <ul>
+                <li v-for="(todo, index) in todos" :key="index">
+                    {{ todo }}
+                    <button @click="removeTodo(index)">حذف</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // تعریف Component
+        Vue.component('counter', {
+            props: ['initial'],
+            data() {
+                return {
+                    count: this.initial || 0
+                }
+            },
+            template: `
+                <div class="card">
+                    <h3>شمارنده</h3>
+                    <p>تعداد: {{ count }}</p>
+                    <button @click="count++">افزایش</button>
+                    <button @click="count--">کاهش</button>
+                    <button @click="count = initial">ریست</button>
+                </div>
+            `
+        });
+
+        // Vue Instance اصلی
+        new Vue({
+            el: '#app',
+            data: {
+                title: 'برنامه Vue 2',
+                newTodo: '',
+                todos: ['خرید', 'مطالعه', 'ورزش']
+            },
+            methods: {
+                addTodo() {
+                    if (this.newTodo.trim()) {
+                        this.todos.push(this.newTodo);
+                        this.newTodo = '';
+                    }
+                },
+                removeTodo(index) {
+                    this.todos.splice(index, 1);
+                }
+            },
+            mounted() {
+                console.log('✅ Vue App آماده است!');
+            }
+        })
+    </script>
+</body>
+</html>

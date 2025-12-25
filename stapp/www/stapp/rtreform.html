@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <style>
+        body { font-family: Tahoma; padding: 20px; background: #f5f5f5; }
+        .form-container { max-width: 500px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; }
+        .form-group { margin: 15px 0; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px; }
+        button { width: 100%; padding: 12px; background: #61dafb; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        .user-card { background: #f9f9f9; padding: 15px; margin: 10px 0; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script>
+        const { useState } = React;
+        const { createRoot } = ReactDOM;
+        const h = React.createElement;
+
+        function UserForm() {
+            const [formData, setFormData] = useState({
+                name: '',
+                email: '',
+                age: ''
+            });
+            const [users, setUsers] = useState([]);
+
+            function handleChange(field, value) {
+                setFormData({
+                    ...formData,
+                    [field]: value
+                });
+            }
+
+            function handleSubmit(e) {
+                e.preventDefault();
+                
+                if (formData.name && formData.email) {
+                    setUsers([
+                        ...users,
+                        { id: Date.now(), ...formData }
+                    ]);
+                    
+                    setFormData({ name: '', email: '', age: '' });
+                }
+            }
+
+            function deleteUser(id) {
+                setUsers(users.filter(u => u.id !== id));
+            }
+
+            return h('div', { className: 'form-container' },
+                h('h1', null, '👥 فرم ثبت کاربر'),
+                
+                // Form
+                h('form', { onSubmit: handleSubmit },
+                    h('div', { className: 'form-group' },
+                        h('label', null, 'نام:'),
+                        h('input', {
+                            type: 'text',
+                            value: formData.name,
+                            onChange: (e) => handleChange('name', e.target.value),
+                            placeholder: 'نام خود را وارد کنید'
+                        })
+                    ),
+                    
+                    h('div', { className: 'form-group' },
+                        h('label', null, 'ایمیل:'),
+                        h('input', {
+                            type: 'email',
+                            value: formData.email,
+                            onChange: (e) => handleChange('email', e.target.value),
+                            placeholder: 'ایمیل خود را وارد کنید'
+                        })
+                    ),
+                    
+                    h('div', { className: 'form-group' },
+                        h('label', null, 'سن:'),
+                        h('input', {
+                            type: 'number',
+                            value: formData.age,
+                            onChange: (e) => handleChange('age', e.target.value),
+                            placeholder: 'سن خود را وارد کنید'
+                        })
+                    ),
+                    
+                    h('button', { type: 'submit' }, '✅ ثبت کاربر')
+                ),
+                
+                // User List
+                h('div', { style: { marginTop: '30px' } },
+                    h('h2', null, `لیست کاربران (${users.length})`),
+                    ...users.map(user =>
+                        h('div', { key: user.id, className: 'user-card' },
+                            h('h3', null, user.name),
+                            h('p', null, `📧 ${user.email}`),
+                            user.age && h('p', null, `🎂 ${user.age} سال`),
+                            h('button', 
+                                { 
+                                    onClick: () => deleteUser(user.id),
+                                    style: { 
+                                        width: 'auto', 
+                                        background: '#e74c3c',
+                                        padding: '8px 16px'
+                                    }
+                                },
+                                '🗑️ حذف'
+                            )
+                        )
+                    )
+                )
+            );
+        }
+
+        createRoot(document.getElementById('root'))
+            .render(h(UserForm));
+    </script>
+</body>
+</html>

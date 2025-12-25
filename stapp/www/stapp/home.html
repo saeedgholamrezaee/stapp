@@ -1,0 +1,30 @@
+{% extends "templates/web.html" %}
+
+{% block title %}{{ title or "Home STERP" }}{% endblock %}
+
+{% block head %}
+  {{ super() }}
+
+  <link rel="stylesheet" href="/assets/stapp/vuefront/assets/index-UdvnZh6r.css" />
+
+{% endblock %}
+
+{% block page_content %}
+  {{ super() }}
+
+  {% include "templates/includes/hero.html" ignore missing %}
+  {% include "stapp/templates/includes/teasert.html" ignore missing %}
+
+  <div id="app"></div>
+
+{% endblock %}
+
+{% block script %}
+  {{ super() }}
+
+  <script>
+    window.APP_CTX = {{ app_ctx_json | safe }};
+  </script>
+
+  <script type="module" src="/assets/stapp/vuefront/assets/index-C3QNfewU.js"></script>
+{% endblock %}

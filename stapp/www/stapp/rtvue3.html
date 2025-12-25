@@ -1,0 +1,183 @@
+<!-- در فایل template فراپ -->
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue 3 - مثال کامل</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+    
+    <style>
+        body { 
+            font-family: Tahoma, Arial; 
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        #app {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .card { 
+            background: white;
+            border: 1px solid #ddd; 
+            border-radius: 8px;
+            padding: 20px; 
+            margin: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button { 
+            padding: 8px 16px; 
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            background: #42b983;
+            color: white;
+            cursor: pointer;
+            font-family: Tahoma;
+        }
+        button:hover {
+            background: #35a372;
+        }
+        input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: Tahoma;
+            width: 300px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        li button {
+            background: #e74c3c;
+            padding: 5px 10px;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        h3 {
+            color: #42b983;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    {%- raw -%}
+    <!-- ✅ همه کد Vue داخل raw قرار می‌گیرد -->
+    <div id="app">
+        <h1>{{ title }}</h1>
+        
+        <!-- Component استفاده -->
+        <counter :initial="5"></counter>
+        <counter :initial="10"></counter>
+        
+        <!-- List -->
+        <div class="card">
+            <h3>لیست کارها</h3>
+            <input 
+                v-model="newTodo" 
+                @keyup.enter="addTodo" 
+                placeholder="کار جدید اضافه کنید..."
+            >
+            <button @click="addTodo">افزودن</button>
+            
+            <ul v-if="todos.length">
+                <li v-for="(todo, index) in todos" :key="index">
+                    <span>{{ index + 1 }}. {{ todo }}</span>
+                    <button @click="removeTodo(index)">حذف</button>
+                </li>
+            </ul>
+            <p v-else style="color: #999; text-align: center;">
+                هیچ کاری وجود ندارد
+            </p>
+            
+            <p style="margin-top: 15px; color: #666;">
+                مجموع کارها: {{ todos.length }}
+            </p>
+        </div>
+    </div>
+    {%- endraw -%}
+
+    <script>
+        const { createApp } = Vue;
+
+        const app = createApp({
+            data() {
+                return {
+                    title: '📝 برنامه مدیریت کارها - Vue 3',
+                    newTodo: '',
+                    todos: ['خرید مواد غذایی', 'مطالعه Vue 3', 'ورزش صبحگاهی']
+                }
+            },
+            methods: {
+                addTodo() {
+                    if (this.newTodo.trim()) {
+                        this.todos.push(this.newTodo);
+                        this.newTodo = '';
+                    }
+                },
+                removeTodo(index) {
+                    this.todos.splice(index, 1);
+                }
+            },
+            mounted() {
+                console.log('✅ Vue 3 App آماده است!');
+                console.log('📊 تعداد کارها:', this.todos.length);
+            }
+        });
+
+        app.component('counter', {
+            props: {
+                initial: {
+                    type: Number,
+                    default: 0
+                }
+            },
+            data() {
+                return {
+                    count: this.initial
+                }
+            },
+            // ✅ Template هم باید در raw باشد یا از backtick استفاده کنید
+            template: `
+                <div class="card">
+                    <h3>⏱️ شمارنده</h3>
+                    <p style="font-size: 24px; font-weight: bold; color: #2c3e50;">
+                        تعداد: {{ count }}
+                    </p>
+                    <div>
+                        <button @click="increment">➕ افزایش</button>
+                        <button @click="decrement">➖ کاهش</button>
+                        <button @click="reset" style="background: #95a5a6;">🔄 ریست</button>
+                    </div>
+                    <p style="margin-top: 10px; color: #7f8c8d; font-size: 14px;">
+                        مقدار اولیه: {{ initial }}
+                    </p>
+                </div>
+            `,
+            methods: {
+                increment() {
+                    this.count++;
+                },
+                decrement() {
+                    this.count--;
+                },
+                reset() {
+                    this.count = this.initial;
+                }
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+</html>
